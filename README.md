@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/1166953335.svg)](https://doi.org/10.5281/zenodo.18776591)
+
 This repository contains the JSON schemas for the Sinai Manuscripts Data Portal and Digital Library. Included, as well, are processing scripts for generating the compiled versions of the schemas for each object and entity type from their constituent parts.
 
 # Sinai Schemas
