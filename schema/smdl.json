@@ -1327,24 +1327,28 @@
                     "unevaluatedItems": false     
                 },
                 "refno": {
-                    "type": "object",
-                    "properties": {
-                        "label": {
-                            "type": "string"
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "label": {
+                                "type": "string"
+                            },
+                            "idno": {
+                                "type": "string"
+                            },
+                            "source": {
+                                "type": "string"
+                            }
                         },
-                        "idno": {
-                            "type": "string"
-                        },
-                        "source": {
-                            "type": "string"
-                        }
+                        "required": [
+                            "label",
+                            "idno",
+                            "source"
+                        ],
+                        "unevaluatedProperties": false
                     },
-                    "required": [
-                        "label",
-                        "idno",
-                        "source"
-                    ],
-                    "unevaluatedProperties": false
+                    "unevaluatedItems": false
                 }
             }
         },
