@@ -11,13 +11,14 @@ MSOBJS_SCHEMA_URL = 'https://raw.githubusercontent.com/UCLALibrary/sinai_schemas
 LAYERS_SCHEMA_URL = 'https://raw.githubusercontent.com/UCLALibrary/sinai_schemas/main/schema/out/layer.compiled.json'
 TXTUNITS_SCHEMA_URL = 'https://raw.githubusercontent.com/UCLALibrary/sinai_schemas/main/schema/out/text_unit.compiled.json'
 EXPORT_SCHEMA_URL = 'https://raw.githubusercontent.com/UCLALibrary/sinai_schemas/main/schema/smdl.json'
+PLACES_SCHEMA_URL = 'https://raw.githubusercontent.com/UCLALibrary/sinai_schemas/main/schema/out/place.compiled.json'
 
-VALID_SCHEMA_OPTIONS = ["agents", "works", "msobjs", "layers", "txtunits", "export"]
+VALID_SCHEMA_OPTIONS = ["agents", "works", "msobjs", "layers", "txtunits", "export", "places"]
 # declare a json schema catalog
 jschon.create_catalog('2020-12')
 
 # Users supply a command line argument to select
-# Valid options are: agents, works, msobjs, layers, or txtunits
+# Valid options are: agents, works, msobjs, layers, txtunits, export, or places
 schema_option = sys.argv[1] if len(sys.argv) > 1 else None
 
 while schema_option not in VALID_SCHEMA_OPTIONS:
@@ -36,6 +37,8 @@ elif schema_option == "txtunits":
     selected_schema = TXTUNITS_SCHEMA_URL
 elif schema_option == "export":
     selected_schema = EXPORT_SCHEMA_URL
+elif schema_option == "places":
+    selected_schema = PLACES_SCHEMA_URL
 else:
     selected_schema = "" # this will cause an error
 
@@ -44,6 +47,17 @@ path_to_records = input("Supply the full path to a directory of JSON records you
 # get the json schema from the URL
 print("Initializing schema...")
 schema_json = requests.get(selected_schema).json()
+
+# jschon only supports 2020-12; remove any embedded $schema refs from other drafts
+# (e.g. external schemas like GeoJSON that use draft-07 get inlined by the compiler)
+def strip_non_2020_meta_schemas(obj):
+    if isinstance(obj, dict):
+        return {k: strip_non_2020_meta_schemas(v) for k, v in obj.items()
+                if not (k == '$schema' and isinstance(v, str) and '2020-12' not in v)}
+    if isinstance(obj, list):
+        return [strip_non_2020_meta_schemas(item) for item in obj]
+    return obj
+schema_json = strip_non_2020_meta_schemas(schema_json)
 
 # declare the json as a JSON Schema
 schema = jschon.JSONSchema(schema_json)
