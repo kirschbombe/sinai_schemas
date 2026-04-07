@@ -1256,10 +1256,12 @@
                                 "type": "object",
                                 "properties": {
                                     "not_before": {
-                                        "type": "integer"
+                                        "type": "string", 
+                                        "minLength": 4
                                     },
                                     "not_after": {
-                                        "type": "integer"
+                                        "type": "string",
+                                        "minLength": 4
                                     }
                                 }
                             }
